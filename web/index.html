@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Movies API</title>
+
+  <style>
+    img {
+      width: 400px;
+      max-height: 500px;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    article {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 420px;
+    }
+
+    main {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+  </style>
+
+  <script type="module">
+    fetch('http://localhost:3000/movies')
+      .then(res => res.json())
+      .then(movies => {
+        movies.forEach(movie => {
+          document.querySelector('main').innerHTML += `
+            <article data-id="${movie.id}">
+              <p> ${movie.title} </p>
+              <p> ${movie.year} </p>
+              <img src="${movie.poster}" />
+              <button> Delete </button>
+            </article>
+          `
+        })
+      })
+
+    document.addEventListener('click', e => {
+      if (e.target.matches('button')) {
+        const article = e.target.closest('article')
+        const id = article.dataset.id
+        fetch(`http://localhost:3000/movies/${id}`, {
+          method: "DELETE"
+        }).then(res => {
+          if (res.ok) {
+            article.remove()
+          }
+        })
+      }
+    })
+  </script>
+</head>
+
+<body>
+  <main></main>
+</body>
+
+</html>
